@@ -33,12 +33,9 @@ def mlp(x, hidden_sizes=(32,), activation=tf.tanh, output_activation=None):
         A TF symbol for the output of an MLP that takes x as an input.
 
     """
-    #######################
-    #                     #
-    #   YOUR CODE HERE    #
-    #                     #
-    #######################
-    pass
+    for size in range(hidden_sizes[:-1]):
+        x = tf.layers.dense(x, units=size, activation=activation)
+    return tf.layers.dense(x, units = hidden_sizes[-1], activation=output_activation)
 
 def mlp_gaussian_policy(x, a, hidden_sizes, activation, output_activation, action_space):
     """
