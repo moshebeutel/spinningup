@@ -23,12 +23,27 @@ def gaussian_likelihood(x, mu, log_std):
     Returns:
         Tensor with shape [batch]
     """
-    #######################
-    #                     #
-    #   YOUR CODE HERE    #
-    #                     #
-    #######################
-    return tf.constant(0)
+    '''
+    computation follows Docs Section 
+
+    https://spinningup.openai.com/en/latest/spinningup/rl_intro.html#part-1-key-concepts-in-rl
+
+    Log-Likelihood. 
+    
+    The log-likelihood of a k -dimensional action a, for a diagonal Gaussian with mean \mu = \mu_{\theta}(s) and standard deviation \sigma = \sigma_{\theta}(s),
+    
+     is given by
+
+    \log \pi_{\theta}(a|s) = -\frac{1}{2}\left(\sum_{i=1}^k \left(\frac{(a_i - \mu_i)^2}{\sigma_i^2} + 2 \log \sigma_i \right) + k \log 2\pi \right).
+    '''
+    # action space dimensionality
+    k = x.shape.as_list()[-1]
+    
+    sqrd_diff_from_mean =   (x - mu)**2
+    weighted_sqrd_diff_from_mean = sqrd_diff_from_mean / (tf.exp(log_std)**2)
+    biased_weighted_sqrd_diff_from_mean = weighted_sqrd_diff_from_mean + 2 * log_std
+    log_likelihood = - 0.5 * (tf.reduce_sum(biased_weighted_sqrd_diff_from_mean, axis=1) + k * np.log(2 * np.pi))
+    return log_likelihood
 
 
 if __name__ == '__main__':
