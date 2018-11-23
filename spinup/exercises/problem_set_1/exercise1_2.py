@@ -13,7 +13,6 @@ so make sure to complete that exercise before beginning this one.
 
 """
 
-EPS = 1e-8
 
 def mlp(x, hidden_sizes=(32,), activation=tf.tanh, output_activation=None):
     """
@@ -33,7 +32,7 @@ def mlp(x, hidden_sizes=(32,), activation=tf.tanh, output_activation=None):
         A TF symbol for the output of an MLP that takes x as an input.
 
     """
-    for size in range(hidden_sizes[:-1]):
+    for size in hidden_sizes[:-1]:
         x = tf.layers.dense(x, units=size, activation=activation)
     return tf.layers.dense(x, units = hidden_sizes[-1], activation=output_activation)
 
@@ -69,15 +68,15 @@ def mlp_gaussian_policy(x, a, hidden_sizes, activation, output_activation, actio
             Gaussian distribution.
 
     """
-    #######################
-    #                     #
-    #   YOUR CODE HERE    #
-    #                     #
-    #######################
-    # mu = 
-    # log_std = 
-    # pi = 
-
+    action_space_dim = a.shape.as_list()[-1]
+    #add layer for logits the size of action space dim
+    hidden =  list(hidden_sizes)+[action_space_dim]
+    mu = mlp(x,hidden_sizes=hidden, activation=activation, output_activation=output_activation)
+    log_std = tf.get_variable(name='log_std', initializer=-0.5*np.ones(action_space_dim,dtype=np.float32))
+    std = tf.exp(log_std)
+    # sample actions from the current estimated policy
+    pi = mu + tf.random_normal(tf.shape(mu)) * std
+    # compute log liklihood of actions
     logp = exercise1_1.gaussian_likelihood(a, mu, log_std)
     logp_pi = exercise1_1.gaussian_likelihood(pi, mu, log_std)
     return pi, logp, logp_pi
