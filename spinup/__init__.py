@@ -6,6 +6,9 @@ from spinup.algos.td3.td3 import td3
 from spinup.algos.trpo.trpo import trpo
 from spinup.algos.vpg.vpg import vpg
 
+#simple implementation
+from spinup.simple_impls.vpg import simple_vpg
+
 # Loggers
 from spinup.utils.logx import Logger, EpochLogger
 

@@ -176,9 +176,10 @@ if __name__ == '__main__':
 
     cmd = sys.argv[1] if len(sys.argv) > 1 else 'help'
     valid_algos = ['vpg', 'trpo', 'ppo', 'ddpg', 'td3', 'sac']
+    valid_simple_impls = ['simple_vpg']
     valid_utils = ['plot', 'test_policy']
     valid_help = ['--help', '-h', 'help']
-    valid_cmds = valid_algos + valid_utils + valid_help
+    valid_cmds = valid_algos + valid_utils + valid_help + valid_simple_impls
     assert cmd in valid_cmds, \
         "Select an algorithm or utility which is implemented in Spinning Up."
 
