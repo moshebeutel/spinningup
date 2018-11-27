@@ -14,6 +14,7 @@ def simple_vpg(env_fn=lambda : gym.make('CartPole-v1')
     , gamma=0.99
     , pi_lr=1e-5
     , logger_kwargs=dict()
+    , save_freq=10
     ):
 
     
@@ -33,6 +34,7 @@ def simple_vpg(env_fn=lambda : gym.make('CartPole-v1')
 
     # init log
     logger = EpochLogger(**logger_kwargs)
+
     logger.save_config(locals())
 
     #make gym enviornment
@@ -72,6 +74,8 @@ def simple_vpg(env_fn=lambda : gym.make('CartPole-v1')
     session = tf.InteractiveSession()
     session.run(tf.global_variables_initializer())
 
+    logger.setup_tf_saver(session, inputs={'x': obs_ph}, outputs={'pi': actions})
+
     #train
     for iter in range(num_of_train_iterations):
         #single train iteration
@@ -107,7 +111,8 @@ def simple_vpg(env_fn=lambda : gym.make('CartPole-v1')
                 #reset episodic data
                 obs, reward, done, ep_rews = env.reset(), 0, False, []
                 
-
+        if (iter % save_freq == 0) or (iter >= num_of_train_iterations - 1):
+            logger.save_state({'env': env}, None)
         # TODO: normalize advs trick:
         # batch_advs = np.array(batch_rtgs)
         # batch_advs = (batch_advs - np.mean(batch_advs))/(np.std(batch_advs) + 1e-8)
