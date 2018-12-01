@@ -8,6 +8,7 @@ from spinup.algos.vpg.vpg import vpg
 
 #simple implementation
 from spinup.simple_impls.vpg import simple_vpg
+from spinup.simple_impls.dqn import simple_dqn
 
 # Loggers
 from spinup.utils.logx import Logger, EpochLogger
