@@ -15,8 +15,8 @@ def simple_dqn(env_fn = lambda : gym.make('CartPole-v1')
     , logger_kwargs=dict()
     , save_freq=1000
     , hidden_dim=32
-    , n_layers=1
-    , lr=1e-3
+    , n_layers=2
+    , lr=1e-4
     , batch_size=32
     , target_update_freq=2500
     , final_epsilon=0.05
@@ -30,14 +30,13 @@ def simple_dqn(env_fn = lambda : gym.make('CartPole-v1')
     max_steps_per_epoch  = 5000
 
     # Global variables
-    num_of_train_iterations = epochs
+    num_of_train_epochs = epochs
     # `number_of_layers` hidden layers with `hidden_dim` units each
 
     number_of_layers = n_layers
     learning_rate = lr
     discount_factor = gamma
-    epsilon = 0.1
-    init_epsilon = epsilon
+    
  
 
     # init log
@@ -105,16 +104,17 @@ def simple_dqn(env_fn = lambda : gym.make('CartPole-v1')
 
     logger.setup_tf_saver(session, inputs={'x': obs_ph}, outputs={'q': eval_net})
 
-    #TODO 
-    total_number_of_steps = steps_before_training + epochs * max_steps_per_epoch
+
     current_index = replay_buffer_size - 1
-    epoch = 0
+    #reset train data
+    epoch, step, training_finished, epsilon = 0, 0, False, 1
     #reset epoch data
     epoch_rews, epoch_lens, epoch_losses,  epoch_qs = [], [], [], []
     #reset episodic data
     obs, reward, done, ep_rews, ep_len, episode_num, end_of_epoch = env.reset(), 0, False, 0, 0, 0, False
     last_number_steps = 0 
-    for step in range(total_number_of_steps):
+    while not training_finished:
+        step += 1
         #get action - 
         #     epsilon greedy
         selected_action = 0
@@ -185,6 +185,7 @@ def simple_dqn(env_fn = lambda : gym.make('CartPole-v1')
                 session.run(target_update_op)
                 
                 epoch += 1
+                training_finished = epoch >= num_of_train_epochs
                 
                 #test epoch
                 ep_rets, ep_lens = [], []
